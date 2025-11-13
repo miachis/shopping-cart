@@ -1,0 +1,25 @@
+.navbar {
+  display: flex;
+  background-color: rgba(234, 231, 207, 1);
+  width: 593px;
+  height: 75px;
+  border-radius: 16px;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  margin-top: 64px;
+}
+
+a {
+  font-size: 36px;
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+}
+
+.links:hover {
+  background-color: black;
+  color: white;
+  padding: 7px;
+  border-radius: 10px;
+}
