@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { useOutletContext } from "react-router";
 
 function Shop() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
+  const [cartCount, setCartCount] = useOutletContext();
 
   useEffect(() => {
     const getProducts = async () => {
@@ -13,8 +15,10 @@ function Shop() {
           throw new Error("server error");
         }
         const data = await response.json();
+        data.forEach((entry) => {
+          entry.value = 1;
+        });
         setData(data);
-        console.log(data);
       } catch (error) {
         setError(error);
       } finally {
@@ -23,6 +27,34 @@ function Shop() {
     };
     getProducts();
   }, []);
+
+  const addToCart = function () {
+    setCartCount(cartCount + 1);
+  };
+
+  const addCountHandler = function (id) {
+    setData((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, value: item.value + 1 } : item
+      )
+    );
+  };
+
+  const removeCountHandler = function (id) {
+    setData((prev) =>
+      prev.map((item) => {
+        if (item.id === id) {
+          if (item.value === 1) {
+            return { ...item };
+          } else {
+            return { ...item, value: item.value - 1 };
+          }
+        } else {
+          return item;
+        }
+      })
+    );
+  };
 
   if (loading) return <h1>Loading...</h1>;
   if (error) return <h1>There is an Error</h1>;
@@ -42,11 +74,36 @@ function Shop() {
               <p className="product-name">{product.title}</p>
               <p className="product-price">${product.price}</p>
               <div className="product-number">
-                <input type="text" className="product-count" />
-                <button className="product-btn">+</button>
-                <button className="product-btn">-</button>
+                <input
+                  type="text"
+                  className="product-count"
+                  value={product.value}
+                  onChange={(e) => {
+                    setData((prev) =>
+                      prev.map((item) =>
+                        item.id === product.id
+                          ? { ...item, value: e.target.value }
+                          : item
+                      )
+                    );
+                  }}
+                />
+                <button
+                  className="product-btn"
+                  onClick={() => addCountHandler(product.id)}
+                >
+                  +
+                </button>
+                <button
+                  className="product-btn"
+                  onClick={() => removeCountHandler(product.id)}
+                >
+                  -
+                </button>
               </div>
-              <button className="add-to-cart">Add to cart</button>
+              <button className="add-to-cart" onClick={addToCart}>
+                Add to cart
+              </button>
             </div>
           </div>
         );
