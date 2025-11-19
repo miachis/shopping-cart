@@ -1,35 +1,21 @@
-import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router";
 
 function Shop() {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [data, setData] = useState(null);
-  const [cartCount, setCartCount] = useOutletContext();
+  const {
+    cartCount,
+    setCartCount,
+    setCartProducts,
+    data,
+    loading,
+    error,
+    setData,
+  } = useOutletContext();
 
-  useEffect(() => {
-    const getProducts = async () => {
-      try {
-        const response = await fetch("https://fakestoreapi.com/products");
-        if (response.status != 200) {
-          throw new Error("server error");
-        }
-        const data = await response.json();
-        data.forEach((entry) => {
-          entry.value = 1;
-        });
-        setData(data);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getProducts();
-  }, []);
-
-  const addToCart = function () {
+  const addToCart = function (id) {
     setCartCount(cartCount + 1);
+    setCartProducts((prev) => {
+      return [...prev, data[id - 1]];
+    });
   };
 
   const addCountHandler = function (id) {
@@ -101,7 +87,12 @@ function Shop() {
                   -
                 </button>
               </div>
-              <button className="add-to-cart" onClick={addToCart}>
+              <button
+                className="add-to-cart"
+                onClick={() => {
+                  addToCart(product.id);
+                }}
+              >
                 Add to cart
               </button>
             </div>
