@@ -17,9 +17,7 @@ function App() {
           throw new Error("server error");
         }
         const data = await response.json();
-        data.forEach((entry) => {
-          entry.value = 1;
-        });
+        data.forEach((entry) => (entry.quantity = 1));
         setData(data);
       } catch (error) {
         setError(error);

@@ -21,7 +21,7 @@ function Shop() {
   const addCountHandler = function (id) {
     setData((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, value: item.value + 1 } : item
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       )
     );
   };
@@ -30,10 +30,10 @@ function Shop() {
     setData((prev) =>
       prev.map((item) => {
         if (item.id === id) {
-          if (item.value === 1) {
+          if (item.quantity === 1) {
             return { ...item };
           } else {
-            return { ...item, value: item.value - 1 };
+            return { ...item, quantity: item.quantity - 1 };
           }
         } else {
           return item;
@@ -63,15 +63,14 @@ function Shop() {
                 <input
                   type="text"
                   className="product-count"
-                  value={product.value}
+                  value={product.quantity}
                   onChange={(e) => {
-                    setData((prev) =>
-                      prev.map((item) =>
-                        item.id === product.id
-                          ? { ...item, value: e.target.value }
-                          : item
-                      )
-                    );
+                    setData((data) => {
+                      return [
+                        ...data,
+                        (data[product.id - 1].quantity = e.target.value),
+                      ];
+                    });
                   }}
                 />
                 <button
